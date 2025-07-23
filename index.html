@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starcraft Bingo</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="./app.ts"></script>
+</head>
+
+<body class="p-4">
+    <button id="openSidebarBtn" class="fixed left-2 top-2 z-40 bg-cyan-700 hover:bg-cyan-900 text-white px-4 py-2 rounded-lg shadow-lg glow font-bold transition-all duration-300">
+        WORD LIST
+    </button>
+    <!-- Sidebar for Word List -->
+    <div id="wordSidebar"
+        class="fixed z-50 left-0 top-0 h-full w-80 bg-gray-900 bg-opacity-95 border-r-4 border-cyan-500 shadow-2xl transition-transform duration-300 transform -translate-x-full flex flex-col">
+        <div class="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-cyan-700 to-blue-900 border-b border-cyan-400">
+            <button id="validateWordList" class="bg-cyan-700 hover:bg-cyan-900 text-white px-4 py-2 rounded-lg shadow-lg glow font-bold transition-all duration-300">
+                Validate list
+            </button>
+            <button id="closeSidebarBtn" class="text-cyan-200 hover:text-yellow-400 text-2xl font-bold focus:outline-none">&times;</button>
+        </div>
+        <div class="flex-1 p-4">
+            <textarea id="wordListArea" class="w-full h-full bg-gray-800 text-cyan-200 rounded-lg p-2 font-mono text-sm border border-cyan-600 resize-none shadow-inner">
+            </textarea>
+        </div>
+    </div>
+
+    <div class="container mx-auto max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-cyan-400 mb-2 glow">STARCRAFT BINGO</h1>
+            <p class="text-cyan-300 text-lg">Tactical Gaming Protocol Initiated</p>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="hologram rounded-lg p-4 mb-6 scanline">
+            <div class="flex justify-between items-center text-cyan-400">
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm">
+                        <span class="text-cyan-300">Lines:</span>
+                        <span id="linesCount" class="text-green-400 font-bold">0</span>
+                    </div>
+                    <div class="text-sm">
+                        <span class="text-cyan-300">Status:</span>
+                        <span id="gameStatus" class="text-yellow-400 font-bold">ACTIVE</span>
+                    </div>
+                </div>
+                <div class="flex items-center z-50 space-x-3">
+                    <input id="seedInput" type="text" placeholder="Seed (optional)" class="px-3 py-1 bg-gray-800 border border-cyan-500 rounded text-cyan-300 text-sm w-32" />
+                    <button id="newGameBtn" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 glow font-bold">
+                        NEW GAME
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bingo Grid -->
+        <div class="grid grid-cols-5 gap-3 mb-8 mx-auto">
+            <!-- Header Row -->
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-center py-3 rounded-lg glow">B</div>
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-center py-3 rounded-lg glow">I</div>
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-center py-3 rounded-lg glow">N</div>
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-center py-3 rounded-lg glow">G</div>
+            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-center py-3 rounded-lg glow">O</div>
+
+            <!-- Grid Cells -->
+            <div id="bingoGrid" class="contents">
+                <!-- Cells will be generated here -->
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden text-center mb-4">
+            <div class="text-2xl font-bold text-green-400 glow-strong">
+                🎉 LINE COMPLETE! 🎉
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victoryScreen" class="victory-screen" style="display: none;">
+            <div class="victory-content">
+                <div class="victory-text">VICTORY!</div>
+                <div class="victory-subtext">Mission Accomplished</div>
+                <div class="mt-8">
+                    <button id="victoryNewGameBtn"
+                        class="px-8 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all duration-300 glow-strong text-lg">
+                        DEPLOY NEW MISSION
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Button -->
+        <div class="text-center mt-4">
+            <button id="shareBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                    </path>
+                </svg>
+                Generate Share Link
+            </button>
+            <div id="shareUrlContainer" class="hidden flex-1 items-center gap-2">
+                <input type="text" id="shareUrlInput" readonly class="flex-1 px-3 py-2 bg-gray-700 text-white rounded-lg border border-purple-500 focus:outline-none" />
+                <button id="copyUrlBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg transition-colors duration-200">
+                    Copy
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
