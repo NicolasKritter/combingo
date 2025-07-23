@@ -102,10 +102,10 @@ function setItems(): void {
 }
 
 
-function getDataFromURL() {
+function getDataFromURL(): { seed: string, state: string[] } {
   const currentURL = new URL(window.location as any)
   const stateParam = currentURL.searchParams.get('state')
-  return { seed: currentURL.searchParams.get('seed') || '', state: stateParam ? stateParam.split(',') : [] }
+  return { seed: currentURL.searchParams.get('seed') || Date.now() + '', state: stateParam ? stateParam.split(',') : [] }
 }
 
 
@@ -129,11 +129,10 @@ function generateShareURL(): string {
 // Initialize the game when page loads
 window.addEventListener('DOMContentLoaded', () => {
   const config = getDataFromURL()
-
-  if (config.seed) {
-    (document.getElementById('seedInput') as HTMLInputElement).value = config.seed
-  }
-  (document.getElementById('wordListArea') as HTMLInputElement).value = bingoDefaultItems.join('\n')
+  const inputSeed = document.getElementById('seedInput')! as HTMLInputElement
+  inputSeed.value = config.seed
+  const wordListArea = document.getElementById('wordListArea') as HTMLInputElement
+  wordListArea.value = bingoDefaultItems.join('\n')
   document.getElementById('validateWordList')!.addEventListener('click', setItems)
   setItems()
 
