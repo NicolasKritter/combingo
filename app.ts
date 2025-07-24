@@ -2,7 +2,7 @@
 
 import BingoGame from "./BingoGame"
 
-const bingoDefaultItems = [
+let bingItems = [
   'Tourelles', 'cacanecdote', 'funka s\'emballe au cast', 'blague de tkl', 'clip de zeratool',
   'y joue kan clem', 'famélique', 'ça parle pas de la game', 'ça parle de la game', 'LOULOU!', 'move dinguerie', 'cheese', 'camping', 'balance whine',
   'aligulac mentionné', 'n\'a pas check liquipedia', 'le chat parle pas de la game', 'chat endormis', 'chat spam', 'sub hype', 'big donation', 'big brain move', 'supply block',
@@ -29,16 +29,15 @@ const bingoDefaultItems = [
   'Warp Prism', 'Robotics Bay', 'Templar Archives', 'Fleet Beacon',
   'Photon Cannon', 'Shield Battery', 'Nexus Recall', 'Chrono Boost',
 ]
-let bingoItems: string[] = []
 let currentGame: BingoGame
-
 function bindEvents(game: BingoGame): void {
 
   document.getElementById('newGameBtn')!.addEventListener('click', () => {
     const seed = (document.getElementById('seedInput') as HTMLInputElement).value.trim() || ''
+    game.bingoItems = bingItems
     game.initializeGame(seed)
     document.getElementById('successMessage')!.classList.add('hidden')
-    this.hideVictoryScreen()
+    game.hideVictoryScreen()
   })
 
   document.getElementById('victoryNewGameBtn')!.addEventListener('click', () => {
@@ -95,12 +94,12 @@ function bindEvents(game: BingoGame): void {
       alert('Failed to copy URL to clipboard');
     }
   });
-}
 
-function setItems(): void {
-  bingoItems = (document.getElementById('wordListArea') as HTMLInputElement)!.value.split('\n').filter((e: string) => e && e.trim())
+  document.getElementById('validateWordList')!.addEventListener('click', () => {
+    bingItems = (document.getElementById('wordListArea') as HTMLInputElement)!.value.split('\n').filter((e: string) => e && e.trim())
+    sidebar.classList.add('-translate-x-full');
+  })
 }
-
 
 function getDataFromURL(): { seed: string, state: string[] } {
   const currentURL = new URL(window.location as any)
@@ -132,11 +131,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const inputSeed = document.getElementById('seedInput')! as HTMLInputElement
   inputSeed.value = config.seed
   const wordListArea = document.getElementById('wordListArea') as HTMLInputElement
-  wordListArea.value = bingoDefaultItems.join('\n')
-  document.getElementById('validateWordList')!.addEventListener('click', setItems)
-  setItems()
+  wordListArea.value = bingItems.join('\n')
 
   // Store game instance globally
-  currentGame = new BingoGame(config.seed, config.state.map(i => Number.parseInt(i, 10)), bingoItems)
+  currentGame = new BingoGame(config.seed, config.state.map(i => Number.parseInt(i, 10)), bingItems)
+
   bindEvents(currentGame)
 })

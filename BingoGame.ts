@@ -2,11 +2,11 @@ import { Cell, SeededRandom } from "./classes"
 
 export default class BingoGame {
   grid: Cell[] = []
+  bingoItems: string[]
   private freeCellIndex = 12
   private levelTracker = { lineLevels: new Map<number, number>(), max: 0 }
   private gameWon = false
   private rng: SeededRandom
-  private bingoItems: string[]
   constructor(seed: string, state: number[] = [], bingoItems: string[]) {
     this.bingoItems = bingoItems
     this.initializeGame(seed, state)

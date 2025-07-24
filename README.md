@@ -1,7 +1,7 @@
 # Combingo
 Bingo Game V1
 
-link: [Combingo](https://nicolaskritter.github.io/combingo/)
+Game link: [Combingo](https://nicolaskritter.github.io/combingo/)
 
 ## TUTO
 ### GAME
@@ -21,5 +21,5 @@ link: [Combingo](https://nicolaskritter.github.io/combingo/)
 4) Start a new game
 
 ## TODOs
-[] ui for cell & grid level up
-[] different layout for grid based on seed
+- [ ] ui for cell & grid level up
+- [ ] different layout for grid based on seed
