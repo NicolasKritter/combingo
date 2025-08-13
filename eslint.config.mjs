@@ -19,7 +19,8 @@ export default tseslint.config([
     rules: {
       'no-await-in-loop': 'error',
       '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
-      '@stylistic/comma-dangle': ['error', 'never']
+      '@stylistic/comma-dangle': ['error', 'never'],
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }]
     }
   }
 ]

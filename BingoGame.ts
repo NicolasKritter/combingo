@@ -1,4 +1,4 @@
-import { Cell, SeededRandom } from "./classes"
+import { Cell, SeededRandom } from './classes'
 
 export default class BingoGame {
   grid: Cell[] = []
@@ -19,7 +19,7 @@ export default class BingoGame {
 
   initializeGame(seed: string = '', state: number[] = []) {
     this.rng = new SeededRandom(seed)
-    this.levelTracker = { lineLevels: new Map<number, number>(), max: 0 } //TODO implement 
+    this.levelTracker = { lineLevels: new Map<number, number>(), max: 0 } // TODO implement
     this.generateGrid(state)
     this.renderGrid()
     this.updateStatus()
@@ -27,7 +27,6 @@ export default class BingoGame {
   }
 
   private generateGrid(state: number[] = []) {
-
     this.grid = []
     const shuffled = [...this.bingoItems]
     // Fisher-Yates shuffle with seeded random
@@ -38,23 +37,21 @@ export default class BingoGame {
 
     for (let i = 0; i < 25; i++) {
       let cell: Cell
-      //TODO pass freecellindex in state param
+      // TODO pass freecellindex in state param
       if (i === this.freeCellIndex) { // Center cell (FREE)
         cell = new Cell('FREE SPACE')
         cell.isFree = true
         // Auto-select the FREE space at max level
         cell.counter = 3
         this.grid.push(cell)
-      }
-      else {
+      } else {
         // handle cases with less than 25 words
         const text = shuffled[i] ? shuffled[i] : shuffled[Math.floor(this.rng.next() * shuffled.length)]
         cell = new Cell(text)
 
         if (state && state.includes(i)) {
-
-          //TODO implement level from state and counting completed row (do after first render? )
-          //TODo so use index:count and parse (state.find e.i=i, cell.counter ) e.counter?
+          // TODO implement level from state and counting completed row (do after first render? )
+          // TODo so use index:count and parse (state.find e.i=i, cell.counter ) e.counter?
           cell.counter += 1
         }
         this.grid.push(cell)
@@ -62,22 +59,26 @@ export default class BingoGame {
     }
   }
 
+  private setCellContentAndStatus(cellElement: HTMLDivElement, cell: Cell): void {
+    const cellState = cell.counter > 0 ? 'selected' : ''
+    if (cellState) {
+      cellElement.classList.add(cellState)
+    }
+    if (cell.counter > 0) {
+      cellElement.textContent = cell.text + ' X' + cell.counter
+    } else {
+      cellElement.textContent = cell.text
+    }
+  }
+
   private renderGrid() {
     const gridContainer = document.getElementById('bingoGrid')!
     gridContainer.innerHTML = ''
     this.grid.forEach((cell, index) => {
-      //  todo create function to create the cell element and use it to rerender only the togelled cell
-      //todo so need to add cell id and replace cell content (chec if can replace html element directly ?) 
       const cellElement = document.createElement('div')
-      const cellState = cell.counter > 0 ? 'selected' : ''
-      cellElement.className = 'bingo-cell cursor-pointer p-3 rounded-lg text-white text-center text-sm font-bold min-h-20 flex items-center justify-center '
-      if (cellState) {
-        cellElement.classList.add(cellState)
-      }
-      cellElement.textContent = cell.text
-      if (cell.counter > 0) {
-        cellElement.textContent += ' X' + cell.counter
-      }
+      cellElement.id = 'cell' + index
+      cellElement.className = 'bingo-cell cursor-pointer p-3 rounded-lg text-white text-center text-sm min-h-20 flex items-center justify-center '
+      this.setCellContentAndStatus(cellElement, cell)
       cellElement.addEventListener('click', () => this.toggleCell(index))
       gridContainer.appendChild(cellElement)
     })
@@ -87,8 +88,16 @@ export default class BingoGame {
     if (this.gameWon) return
     const cell = this.grid[index]
     cell.counter += 1
-    //TODO only render changed cell 
-    this.renderGrid()
+    const element = document.getElementById('cell' + index) as HTMLDivElement
+
+    // Add glow animation
+    element.classList.add('glow-click')
+    // Remove animation class after it completes
+    element.addEventListener('animationend', () => {
+      element.classList.remove('glow-click')
+    }, { once: true })
+
+    this.setCellContentAndStatus(element, cell)
     this.checkWinConditions()
     this.updateStatus()
   }
@@ -102,9 +111,8 @@ export default class BingoGame {
       [0, 5, 10, 15, 20], [1, 6, 11, 16, 21], [2, 7, 12, 17, 22],
       [3, 8, 13, 18, 23], [4, 9, 14, 19, 24],
       // Diagonals
-      [0, 6, 12, 18, 24], [4, 8, 12, 16, 20],
+      [0, 6, 12, 18, 24], [4, 8, 12, 16, 20]
     ]
-
 
     lines.forEach((line, lineIndex) => {
       const targetLevel = this.levelTracker.lineLevels.get(lineIndex) || 0
@@ -124,7 +132,7 @@ export default class BingoGame {
 
     // TODO  game won by level and button restart or continue win cond = has newNew and count >0 (handle level up)
     // Check for full card
-    //12 lines +col +diag or 25 cell
+    // 12 lines +col +diag or 25 cell
     if (this.levelTracker.lineLevels.size === 12) {
       this.gameWon = true
       setTimeout(() => {
@@ -142,7 +150,7 @@ export default class BingoGame {
 
         // Add golden sweep effect
         const effect = document.createElement('div')
-        effect.className = 'line-complete-effect'
+        effect.className = 'line-complete-effect glow-click'
         cell.style.position = 'relative'
         cell.appendChild(effect)
 
@@ -160,13 +168,11 @@ export default class BingoGame {
   }
 
   private showSuccessAnimation(isFullCard = false) {
-
     if (isFullCard) {
       // Show full victory screen like SC2
       document.getElementById('victoryScreen')!.style.display = 'block'
       document.body.style.overflow = 'hidden'
-    }
-    else {
+    } else {
       // Show line complete message
       const successMessage = document.getElementById('successMessage')!
       successMessage.classList.remove('hidden')
@@ -179,14 +185,8 @@ export default class BingoGame {
 
   private updateStatus() {
     document.getElementById('linesCount')!.textContent = this.levelTracker.lineLevels.size + ''
-    const status = this.gameWon
-      ? 'VICTORY!'
-      : this.levelTracker.lineLevels.size > 0 ? 'LINES COMPLETE' : 'ACTIVE'
+    const status = this.gameWon ? 'VICTORY!' : this.levelTracker.lineLevels.size > 0 ? 'LINES COMPLETE' : 'ACTIVE'
     document.getElementById('gameStatus')!.textContent = status
-    document.getElementById('gameStatus')!.className
-      = `font-bold ${this.gameWon
-        ? 'text-green-400'
-        : this.levelTracker.lineLevels.size > 0 ? 'text-orange-400' : 'text-yellow-400'}`
+    document.getElementById('gameStatus')!.className = `font-bold ${this.gameWon ? 'text-green-400' : this.levelTracker.lineLevels.size > 0 ? 'text-orange-400' : 'text-yellow-400'}`
   }
-
 }

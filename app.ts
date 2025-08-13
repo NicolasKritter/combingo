@@ -89,8 +89,7 @@ function bindEvents(game: BingoGame): void {
         copyUrlBtn.textContent = originalText
         copyUrlBtn.classList.remove('bg-green-600')
       }, 2000)
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to copy URL:', err)
       alert('Failed to copy URL to clipboard')
     }
@@ -113,8 +112,7 @@ function generateShareURL(): string {
   const seed = (document.getElementById('seedInput') as HTMLInputElement).value
 
   // Get indexes of selected cells (counter > 0)
-  const selectedCells = currentGame.grid
-    .map((cell, index) => ({ index, counter: cell.counter }))
+  const selectedCells = currentGame.grid.map((cell, index) => ({ index, counter: cell.counter }))
     .filter(cell => cell.counter > 0)
     .map(cell => cell.index)
     .join(',')
