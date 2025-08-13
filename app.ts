@@ -1,13 +1,14 @@
 // Starcraft-themed bingo items
 
-import BingoGame from "./BingoGame"
+import BingoGame from './BingoGame'
 
 let bingItems = [
   'Tourelles', 'cacanecdote', 'funka s\'emballe au cast', 'blague de tkl', 'clip de zeratool',
   'y joue kan clem', 'famélique', 'ça parle pas de la game', 'ça parle de la game', 'LOULOU!', 'move dinguerie', 'cheese', 'camping', 'balance whine',
   'aligulac mentionné', 'n\'a pas check liquipedia', 'le chat parle pas de la game', 'chat endormis', 'chat spam', 'sub hype', 'big donation', 'big brain move', 'supply block',
   'doom drop', 'les casteurs se font troll', 'les casteurs trollent le chat', 'le chat dit un truc bête', 'le chat dit un truc intelligent',
-  'c\'est une rediff ?', 'copy pasta', 'star dans le chat', 'pov', 'gg', 'BM!',
+  'c\'est une rediff ?', 'copy pasta', 'star dans le chat', 'pov', 'gg', 'BM!', 'Nuke', 'Recall', 'O7', 'distru', 'split', 'recall',
+  'pull the boys', 'hype train', 'tchou tchou', '3 libé c\'est GG', 'mental brabouf', 'casteurs en pls',
   //
   'Build SCV', 'Construct Barracks', 'Train Marines',
   'Build Supply Depot', 'Upgrade Infantry',
@@ -27,11 +28,10 @@ let bingItems = [
   'Void Ray Beam', 'Carrier Fleet', 'Colossus March', 'Immortal Guard',
   'High Templar', 'Dark Templar', 'Archon Merge', 'Observer Scout',
   'Warp Prism', 'Robotics Bay', 'Templar Archives', 'Fleet Beacon',
-  'Photon Cannon', 'Shield Battery', 'Nexus Recall', 'Chrono Boost',
+  'Photon Cannon', 'Shield Battery', 'Nexus Recall', 'Chrono Boost'
 ]
 let currentGame: BingoGame
 function bindEvents(game: BingoGame): void {
-
   document.getElementById('newGameBtn')!.addEventListener('click', () => {
     const seed = (document.getElementById('seedInput') as HTMLInputElement).value.trim() || ''
     game.bingoItems = bingItems
@@ -58,77 +58,75 @@ function bindEvents(game: BingoGame): void {
 
   const sidebar = document.getElementById('wordSidebar')!
   document.getElementById('openSidebarBtn')!.addEventListener('click', () => {
-    sidebar.classList.remove('-translate-x-full');
-  });
+    sidebar.classList.remove('-translate-x-full')
+  })
   document.getElementById('closeSidebarBtn')!.addEventListener('click', () => {
-    sidebar.classList.add('-translate-x-full');
-  });
+    sidebar.classList.add('-translate-x-full')
+  })
 
-  const shareBtn = document.getElementById('shareBtn')!;
-  const shareUrlContainer = document.getElementById('shareUrlContainer')!;
-  const shareUrlInput = document.getElementById('shareUrlInput') as HTMLInputElement;
-  const copyUrlBtn = document.getElementById('copyUrlBtn')!;
+  const shareBtn = document.getElementById('shareBtn')!
+  const shareUrlContainer = document.getElementById('shareUrlContainer')!
+  const shareUrlInput = document.getElementById('shareUrlInput') as HTMLInputElement
+  const copyUrlBtn = document.getElementById('copyUrlBtn')!
 
   shareBtn.addEventListener('click', () => {
-    const url = generateShareURL();
-    shareUrlInput.value = url;
-    shareUrlContainer.classList.remove('hidden');
-    shareUrlInput.select();
-  });
+    const url = generateShareURL()
+    shareUrlInput.value = url
+    shareUrlContainer.classList.remove('hidden')
+    shareUrlInput.select()
+  })
 
   copyUrlBtn.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(shareUrlInput.value);
+      await navigator.clipboard.writeText(shareUrlInput.value)
 
       // Show feedback
-      const originalText = copyUrlBtn.textContent;
-      copyUrlBtn.textContent = 'Copied!';
-      copyUrlBtn.classList.add('bg-green-600');
+      const originalText = copyUrlBtn.textContent
+      copyUrlBtn.textContent = 'Copied!'
+      copyUrlBtn.classList.add('bg-green-600')
 
       setTimeout(() => {
-        copyUrlBtn.textContent = originalText;
-        copyUrlBtn.classList.remove('bg-green-600');
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy URL:', err);
-      alert('Failed to copy URL to clipboard');
+        copyUrlBtn.textContent = originalText
+        copyUrlBtn.classList.remove('bg-green-600')
+      }, 2000)
     }
-  });
+    catch (err) {
+      console.error('Failed to copy URL:', err)
+      alert('Failed to copy URL to clipboard')
+    }
+  })
 
   document.getElementById('validateWordList')!.addEventListener('click', () => {
     bingItems = (document.getElementById('wordListArea') as HTMLInputElement)!.value.split('\n').filter((e: string) => e && e.trim())
-    sidebar.classList.add('-translate-x-full');
+    sidebar.classList.add('-translate-x-full')
   })
 }
 
 function getDataFromURL(): { seed: string, state: string[] } {
-  const currentURL = new URL(window.location as any)
+  const currentURL = new URL(window.location.href)
   const stateParam = currentURL.searchParams.get('state')
   return { seed: currentURL.searchParams.get('seed') || Date.now() + '', state: stateParam ? stateParam.split(',') : [] }
 }
 
-
 function generateShareURL(): string {
-  const baseURL = window.location.href.split('?')[0];
-  const seed = (document.getElementById('seedInput') as HTMLInputElement).value;
+  const baseURL = window.location.href.split('?')[0]
+  const seed = (document.getElementById('seedInput') as HTMLInputElement).value
 
   // Get indexes of selected cells (counter > 0)
   const selectedCells = currentGame.grid
     .map((cell, index) => ({ index, counter: cell.counter }))
     .filter(cell => cell.counter > 0)
     .map(cell => cell.index)
-    .join(',');
-
-  const params = new URLSearchParams();
-  if (seed) params.set('seed', seed);
-  if (selectedCells) params.set('state', selectedCells);
-
-  return `${baseURL}?${params.toString()}`;
+    .join(',')
+  const params = new URLSearchParams()
+  if (seed) params.set('seed', seed)
+  if (selectedCells) params.set('state', selectedCells)
+  return `${baseURL}?${params.toString()}`
 }
 // Initialize the game when page loads
 window.addEventListener('DOMContentLoaded', () => {
   const config = getDataFromURL()
-  const inputSeed = document.getElementById('seedInput')! as HTMLInputElement
+  const inputSeed = document.getElementById('seedInput') as HTMLInputElement
   inputSeed.value = config.seed
   const wordListArea = document.getElementById('wordListArea') as HTMLInputElement
   wordListArea.value = bingItems.join('\n')
